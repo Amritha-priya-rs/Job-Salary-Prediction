@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Salary Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="logo">💼 CareerWorth</span>
+      <nav class="tabs">
+        <button class="tab" data-tab="home">Home</button>
+        <button class="tab" data-tab="predict">Prediction</button>
+        <button class="tab" data-tab="dashboard">Dashboard</button>
+        <button class="tab" data-tab="about">More</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ===================== HOME TAB ===================== -->
+    <section class="page" id="page-home">
+
+      <div class="hero">
+        <span class="eyebrow">Insight Coders · AI &amp; Data Science</span>
+        <h1>Job Salary Prediction<br>Using Machine Learning</h1>
+        <p>A Linear Regression-powered web app that estimates a fair salary from job title, experience, education and more — in seconds.</p>
+        <button class="cta" data-goto="predict">Try the Predictor →</button>
+      </div>
+
+      <div class="section">
+        <h2>The Problem</h2>
+        <div class="card quote-card">
+          <p>Job seekers often do not know what salary they should expect for a particular job. Similarly, companies need an efficient way to estimate a fair salary for different job profiles.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card small-card">Fresh graduates may have limited knowledge about current market salaries.</div>
+          <div class="card small-card">Manual salary estimation can be inaccurate and inconsistent.</div>
+          <div class="card small-card">Comparing several job factors together is time-consuming.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Project Objectives</h2>
+        <div class="grid-3">
+          <div class="card obj-card"><span class="num">1</span><h3>Predict Accurately</h3><p>Use ML to estimate salary from multiple input features.</p></div>
+          <div class="card obj-card"><span class="num">2</span><h3>Reduce Manual Work</h3><p>Automate salary estimation and cut dependency on manual calculation.</p></div>
+          <div class="card obj-card"><span class="num">3</span><h3>Help Job Seekers</h3><p>Give an instant estimated salary based on their profile.</p></div>
+          <div class="card obj-card"><span class="num">4</span><h3>Help Recruiters</h3><p>Help understand an appropriate salary level for a profile.</p></div>
+          <div class="card obj-card"><span class="num">5</span><h3>Analyze with ML</h3><p>Identify relationships between job-related features and salary.</p></div>
+          <div class="card obj-card"><span class="num">6</span><h3>Easy Web App</h3><p>A simple interface to enter details and get a prediction.</p></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>How It Works</h2>
+        <div class="flow">
+          <div class="flow-step">Enter Job Details</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Data Processing</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Trained ML Model</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Salary Prediction</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Display Estimate</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>At a Glance</h2>
+        <div class="grid-4 stat-grid">
+          <div class="card stat-card"><strong>{{ "{:,}".format(stats.records) }}</strong><span>Training Records</span></div>
+          <div class="card stat-card"><strong>{{ stats.features }}</strong><span>Input Features</span></div>
+          <div class="card stat-card"><strong>{{ metrics.r2 }}</strong><span>Model R² Score</span></div>
+          <div class="card stat-card"><strong>{{ "{:,.0f}".format(metrics.mae) }}</strong><span>Mean Absolute Error</span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================== PREDICT TAB ===================== -->
+    <section class="page" id="page-predict">
+
+      <div class="intro">
+        <h1>Know your worth in the job market</h1>
+        <p>Fill in your job profile below and get an instant, data-driven salary estimate.</p>
+      </div>
+
+      <div class="layout">
+
+        <section class="card form-card">
+          <h2>Job Details</h2>
+
+          {% macro select(name, label, icon) %}
+          <div class="field">
+            <label for="{{ name }}">{{ icon }} {{ label }}</label>
+            <select id="{{ name }}" name="{{ name }}" required>
+              <option value="" disabled {{ 'selected' if not form.get(name) }}>Select {{ label.lower() }}</option>
+              {% for o in options[name] %}
+              <option value="{{ o }}" {{ 'selected' if form.get(name) == o }}>{{ o }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endmacro %}
+
+          <form method="POST" id="predict-form">
+            <div class="grid">
+              {{ select('job_title', 'Job Title', '🧑‍💻') }}
+              {{ select('education_level', 'Education Level', '🎓') }}
+              {{ select('industry', 'Industry', '🏭') }}
+              {{ select('company_size', 'Company Size', '🏢') }}
+              {{ select('location', 'Location', '📍') }}
+              {{ select('remote_work', 'Remote Work', '🏠') }}
+
+              <div class="field">
+                <label for="experience_years">📈 Experience (years)</label>
+                <input type="number" id="experience_years" name="experience_years" min="0" max="40" step="1"
+                       placeholder="e.g. 5" value="{{ form.get('experience_years', '') }}" required>
+              </div>
+              <div class="field">
+                <label for="skills_count">🛠️ Skills Count</label>
+                <input type="number" id="skills_count" name="skills_count" min="0" max="50" step="1"
+                       placeholder="e.g. 10" value="{{ form.get('skills_count', '') }}" required>
+              </div>
+              <div class="field">
+                <label for="certifications">📜 Certifications</label>
+                <input type="number" id="certifications" name="certifications" min="0" max="20" step="1"
+                       placeholder="e.g. 2" value="{{ form.get('certifications', '') }}" required>
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn">
+              <span class="btn-text">Predict Salary</span>
+              <span class="btn-spinner" hidden></span>
+            </button>
+
+            {% if error %}<p class="error">⚠️ {{ error }}</p>{% endif %}
+          </form>
+        </section>
+
+        <aside class="card side-card">
+          {% if prediction %}
+          <div class="result">
+            <span class="result-label">Estimated Salary</span>
+            <strong class="result-value">₹ {{ prediction }}</strong>
+            <span class="result-sub">based on your inputs</span>
+          </div>
+          {% else %}
+          <div class="placeholder">
+            <div class="placeholder-icon">📊</div>
+            <p>Your predicted salary will appear here once you submit the form.</p>
+          </div>
+          {% endif %}
+
+          <div class="metrics">
+            <h3>Model Performance</h3>
+            <div class="metric-row"><span>R² Score</span><strong>{{ metrics.r2 }}</strong></div>
+            <div class="metric-row"><span>MAE</span><strong>{{ '{:,.0f}'.format(metrics.mae) }}</strong></div>
+            <div class="metric-row"><span>RMSE</span><strong>{{ '{:,.0f}'.format(metrics.rmse) }}</strong></div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ===================== DASHBOARD TAB ===================== -->
+    <section class="page" id="page-dashboard">
+
+      <div class="intro">
+        <h1>Dataset &amp; Model Dashboard</h1>
+        <p>A quick look at the data behind the predictions and how the model performs.</p>
+      </div>
+
+      <div class="section">
+        <div class="grid-4 stat-grid">
+          <div class="card stat-card"><strong>{{ "{:,}".format(stats.records) }}</strong><span>Records</span></div>
+          <div class="card stat-card"><strong>{{ stats.features }}</strong><span>Features</span></div>
+          <div class="card stat-card"><strong>₹{{ "{:,.0f}".format(stats.avg_salary) }}</strong><span>Average Salary</span></div>
+          <div class="card stat-card"><strong>{{ stats.avg_experience }} yrs</strong><span>Average Experience</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Top-Paying Job Titles</h2>
+            <div class="bars">
+              {% set max_val = stats.top_paying_titles[0].value %}
+              {% for row in stats.top_paying_titles %}
+              <div class="bar-row">
+                <span class="bar-label">{{ row.label }}</span>
+                <div class="bar-track"><div class="bar-fill" style="width: {{ (row.value / max_val * 100) | round(1) }}%"></div></div>
+                <span class="bar-value">₹{{ "{:,.0f}".format(row.value) }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Top-Paying Locations</h2>
+            <div class="bars">
+              {% set max_val = stats.top_paying_locations[0].value %}
+              {% for row in stats.top_paying_locations %}
+              <div class="bar-row">
+                <span class="bar-label">{{ row.label }}</span>
+                <div class="bar-track"><div class="bar-fill alt" style="width: {{ (row.value / max_val * 100) | round(1) }}%"></div></div>
+                <span class="bar-value">₹{{ "{:,.0f}".format(row.value) }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card">
+          <h2>Model Comparison</h2>
+          <p class="muted">Accuracy of different ML models evaluated for this project. Linear Regression was chosen for the final website.</p>
+          <div class="bars">
+            {% set model_comparison = [
+              {'label': 'Linear Regression', 'value': 90.27},
+              {'label': 'Decision Tree', 'value': 86.75},
+              {'label': 'Random Forest', 'value': 86.26},
+              {'label': 'KNN', 'value': 77.2}
+            ] %}
+            {% set max_val = 100 %}
+            {% for row in model_comparison %}
+            <div class="bar-row">
+              <span class="bar-label">{{ row.label }}</span>
+              <div class="bar-track"><div class="bar-fill {{ 'highlight' if row.label == 'Linear Regression' }}" style="width: {{ (row.value / max_val * 100) | round(1) }}%"></div></div>
+              <span class="bar-value">{{ row.value }}%</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="card">
+          <h2>Model Performance — Linear Regression</h2>
+          <div class="grid-4">
+            <div class="card small-card metric-highlight"><span>Accuracy</span><strong>90.27%</strong></div>
+            <div class="card small-card metric-highlight"><span>R² Score</span><strong>{{ metrics.r2 }}</strong></div>
+            <div class="card small-card metric-highlight"><span>MAE</span><strong>{{ "{:,.0f}".format(metrics.mae) }}</strong></div>
+            <div class="card small-card metric-highlight"><span>RMSE</span><strong>{{ "{:,.0f}".format(metrics.rmse) }}</strong></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===================== ABOUT / MORE TAB ===================== -->
+    <section class="page" id="page-about">
+
+      <div class="intro">
+        <h1>About This Project</h1>
+        <p>Job Salary Prediction Using Machine Learning — built by Team Insight Coders.</p>
+      </div>
+
+      <div class="section">
+        <h2>System Architecture</h2>
+        
+        <div class="flow">
+          <div class="flow-step">User Interface</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Flask Backend</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">ML Model</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Prediction Output</div>
+        </div>
+        <div class="grid-4">
+          <div class="card small-card"><strong>User Interface</strong><p>The user enters job and candidate information through the website.</p></div>
+          <div class="card small-card"><strong>Flask Backend</strong><p>Receives user input and communicates with the ML model.</p></div>
+          <div class="card small-card"><strong>ML Model</strong><p>The processed input is passed to the trained salary prediction model.</p></div>
+          <div class="card small-card"><strong>Prediction Output</strong><p>The predicted salary is returned and displayed to the user.</p></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Team — Insight Coders</h2>
+        <p class="muted">Department of Artificial Intelligence and Data Science</p>
+        <div class="grid-4">
+          <div class="card small-card team-card">Amritha Priya R S</div>
+          <div class="card small-card team-card">Adwaith Krishna A R</div>
+          <div class="card small-card team-card">Jessia Jojo Kanjirathingal</div>
+          <div class="card small-card team-card">Ajaydev V</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>References</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Dataset</h3>
+            <ul class="ref-list"><li>Kaggle — Job Salary Prediction Dataset</li></ul>
+          </div>
+          <div class="card">
+            <h3>Documentation</h3>
+            <ul class="ref-list">
+              <li>Scikit-learn Documentation — Machine Learning Algorithms</li>
+              <li>Pandas Documentation — Data Processing and Analysis</li>
+              <li>Flask Documentation — Web Application Development</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    Insight Coders · Dept. of AI &amp; Data Science · Job Salary Prediction Using Machine Learning
+  </footer>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const pages = document.querySelectorAll('.page');
+
+    function showTab(name) {
+      tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+      pages.forEach(p => p.classList.toggle('visible', p.id === 'page-' + name));
+      localStorage.setItem('activeTab', name);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+    document.querySelectorAll('[data-goto]').forEach(el => {
+      el.addEventListener('click', () => showTab(el.dataset.goto));
+    });
+
+    // Server tells us which tab to land on (e.g. "predict" right after a form submit)
+    const serverTab = "{{ active_tab }}";
+    const savedTab = localStorage.getItem('activeTab');
+    showTab(serverTab !== 'home' ? serverTab : (savedTab || 'home'));
+
+    const form = document.getElementById('predict-form');
+    const btn = document.getElementById('submit-btn');
+    if (form) {
+      form.addEventListener('submit', () => {
+        btn.disabled = true;
+        btn.querySelector('.btn-text').hidden = true;
+        btn.querySelector('.btn-spinner').hidden = false;
+      });
+    }
+  </script>
+
+</body>
+</html>

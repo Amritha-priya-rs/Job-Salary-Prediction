@@ -1,0 +1,140 @@
+{
+  "options": {
+    "job_title": [
+      "AI Engineer",
+      "Backend Developer",
+      "Business Analyst",
+      "Cloud Engineer",
+      "Cybersecurity Analyst",
+      "Data Analyst",
+      "Data Scientist",
+      "DevOps Engineer",
+      "Frontend Developer",
+      "Machine Learning Engineer",
+      "Product Manager",
+      "Software Engineer"
+    ],
+    "education_level": [
+      "Bachelor",
+      "Diploma",
+      "High School",
+      "Master",
+      "PhD"
+    ],
+    "industry": [
+      "Consulting",
+      "Education",
+      "Finance",
+      "Government",
+      "Healthcare",
+      "Manufacturing",
+      "Media",
+      "Retail",
+      "Technology",
+      "Telecom"
+    ],
+    "company_size": [
+      "Enterprise",
+      "Large",
+      "Medium",
+      "Small",
+      "Startup"
+    ],
+    "location": [
+      "Australia",
+      "Canada",
+      "Germany",
+      "India",
+      "Netherlands",
+      "Remote",
+      "Singapore",
+      "Sweden",
+      "UK",
+      "USA"
+    ],
+    "remote_work": [
+      "Hybrid",
+      "No",
+      "Yes"
+    ]
+  },
+  "metrics": {
+    "mae": 5436.1,
+    "rmse": 7125.52,
+    "r2": 0.9635
+  },
+  "stats": {
+    "records": 250000,
+    "features": 9,
+    "avg_salary": 145718.08,
+    "min_salary": 31867.0,
+    "max_salary": 333046.0,
+    "avg_experience": 10.0,
+    "top_paying_titles": [
+      {
+        "label": "AI Engineer",
+        "value": 173498.0
+      },
+      {
+        "label": "Machine Learning Engineer",
+        "value": 163023.0
+      },
+      {
+        "label": "Product Manager",
+        "value": 157595.0
+      },
+      {
+        "label": "Cloud Engineer",
+        "value": 152103.0
+      },
+      {
+        "label": "DevOps Engineer",
+        "value": 149959.0
+      }
+    ],
+    "top_paying_locations": [
+      {
+        "label": "USA",
+        "value": 181716.0
+      },
+      {
+        "label": "Canada",
+        "value": 167391.0
+      },
+      {
+        "label": "UK",
+        "value": 160075.0
+      },
+      {
+        "label": "Germany",
+        "value": 153376.0
+      },
+      {
+        "label": "Remote",
+        "value": 139443.0
+      }
+    ],
+    "avg_salary_by_education": [
+      {
+        "label": "PhD",
+        "value": 163976.0
+      },
+      {
+        "label": "Master",
+        "value": 153305.0
+      },
+      {
+        "label": "Bachelor",
+        "value": 142411.0
+      },
+      {
+        "label": "Diploma",
+        "value": 137159.0
+      },
+      {
+        "label": "High School",
+        "value": 131715.0
+      }
+    ]
+  }
+}
